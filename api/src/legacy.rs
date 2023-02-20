@@ -4,7 +4,7 @@ use super::*;
 use std::{iter::empty, path::Path};
 
 pub struct ProverContext {
-    worker: OldWorker,
+    worker: Worker,
     crs: Crs<Bn256, CrsForMonomialForm>,
 }
 
@@ -16,7 +16,7 @@ impl ProverContext {
         let crs = Self::read_crs(crs_file_path);
 
         Self {
-            worker: OldWorker::new(),
+            worker: Worker::new(),
             crs,
         }
     }
@@ -24,14 +24,14 @@ impl ProverContext {
         let crs = Self::read_crs(crs_file_path);
 
         Self {
-            worker: OldWorker::new(),
+            worker: Worker::new(),
             crs,
         }
     }
 
     pub fn init_with_dummy_crs() -> Self {
         let domain_size = 1 << 26;
-        let worker = OldWorker::new();
+        let worker = Worker::new();
         let crs = Crs::<Bn256, CrsForMonomialForm>::dummy_crs(domain_size);
         Self { worker, crs }
     }
