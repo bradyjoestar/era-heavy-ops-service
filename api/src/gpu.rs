@@ -132,7 +132,11 @@ impl ProverContext {
                 2,
                 "prover supports only 2 gpus per prover instance"
             );
-            let manager = MemoryManager2x40::init(&device_ids, &crs.g1_bases[..]).unwrap();
+            let manager_init = MemoryManager2x40::init(&device_ids, &crs.g1_bases[..]);
+            let manager = match manager_init {
+                Ok(m) => m,
+                Err(error) => panic!("New GPU manager failed :{:?}",error)
+            };
             ManagerType::Forty(manager)
         } else {
             assert_eq!(
@@ -140,7 +144,11 @@ impl ProverContext {
                 1,
                 "prover supports only 1 gpu per prover instance"
             );
-            let manager = MemoryManager1x80::init(&device_ids, &crs.g1_bases[..]).unwrap();
+            let manager_init = MemoryManager1x80::init(&device_ids, &crs.g1_bases[..]);
+            let manager = match manager_init {
+                Ok(m) => m,
+                Err(error) => panic!("New GPU manager failed :{:?}",error)
+            };
             ManagerType::Eighty(manager)
         };
 

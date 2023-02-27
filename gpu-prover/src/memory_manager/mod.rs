@@ -1,6 +1,7 @@
 use super::*;
 use crate::cuda_bindings::{device_info, DeviceBuf, GpuContext, GpuResult};
 use core::ops::Range;
+use franklin_crypto::plonk::circuit::hashes_with_tables::utils::num_bits;
 use gpu_ffi::*;
 
 mod copying_operations;
@@ -32,11 +33,17 @@ impl<F: PrimeField, MC: ManagerConfigs> DeviceMemoryManager<F, MC> {
         assert_eq!(
             bases.len(),
             MC::FULL_SLOT_SIZE,
-            "number of bases should be equal to size of full slot"
+            "number of bases {} should be equal to size of full slot {}",
+            bases.len(),
+            MC::FULL_SLOT_SIZE
         );
         dbg!(device_ids);
         let num_devices = device_ids.len();
-        assert_eq!(num_devices, MC::NUM_GPUS);
+        assert_eq!(num_devices, MC::NUM_GPUS,
+        "number of devices {} should be equal to num gpus {}",
+        num_devices,
+        MC::NUM_GPUS
+        );
         let mut ctx = vec![];
         for (device_id, bases_chunk) in device_ids.iter().zip(bases.chunks(MC::SLOT_SIZE)) {
             let mut context = GpuContext::new_with_affinity(*device_id, device_ids)?;
